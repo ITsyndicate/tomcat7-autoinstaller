@@ -22,6 +22,9 @@ rm /etc/nginx/sites-enabled/default
 #Creating directory for SSL certs
 mkdir /etc/nginx/.ssl
 cp $MY_PATH/ssl/* /etc/nginx/.ssl/
+#Creating directories for static content and .htpasswd
+mkdir -p $STATICDIR
+mkdir -p $HTPASSDIR
 
 #Configuring Tomcat memory allocation
 sed -i "s/Xmx128m/Xmx${MEMORY}m/" /etc/default/tomcat7
