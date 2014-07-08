@@ -4,7 +4,7 @@
 MY_PATH=`dirname "$0"`
 
 #Parse variables
-source ./install.conf
+source $MY_PATH/install.conf
 
 #Fetch latest repodata
 apt-get update
