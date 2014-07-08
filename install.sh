@@ -180,7 +180,7 @@ echo "root:$ROOTPASS" | chpasswd
 
 #Mysql DB creation and root password configuration
 mysql -e "CREATE DATABASE ${DBNAME};"
-cat $MY_PATH/mysqldamp.sql | mysql $DBNAME
+cat $MY_PATH/mysqldump.sql | mysql $DBNAME
 mysqladmin -u root password $MYSQLPASS
 
 htpasswd -c -b $HTPASSDIR/.htpasswd $HTPASSUSER $HTPASSUPASS
