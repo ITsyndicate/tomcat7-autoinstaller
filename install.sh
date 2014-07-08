@@ -24,7 +24,7 @@ mkdir /etc/nginx/.ssl
 cp $MY_PATH/ssl/* /etc/nginx/.ssl/
 
 #Configuring Tomcat memory allocation
-sed -i 's/Xmx128m/Xmx${MEMORY}m/' /etc/default/tomcat7
+sed -i "s/Xmx128m/Xmx${MEMORY}m/" /etc/default/tomcat7
 
 #Nginx virtual host configuration
 cat > /etc/nginx/sites-available/tomcat.conf << TOMCATCONF
@@ -172,9 +172,6 @@ WWWCONF
 #Linking available site to the enabled
 ln -s /etc/nginx/sites-available/tomcat.conf /etc/nginx/sites-enabled/
 
-#Restarting NginX
-service nginx restart
-
 #Root password configuration
 echo "root:$ROOTPASS" | chpasswd
 
@@ -185,12 +182,24 @@ mysqladmin -u root password $MYSQLPASS
 
 htpasswd -c -b $HTPASSDIR/.htpasswd $HTPASSUSER $HTPASSUPASS
 
+#Installing and configuring java
+mkdir /root/tomcat7/java
 tar -xvf $MY_PATH/jdk-7* -C $MY_PATH/java
-sudo mkdir /usr/lib/jvm
-sudo mv $MY_PATH/java/jdk1.7* /usr/lib/jvm/jdk1.7.0
-sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk1.7.0/bin/java" 1
-sudo update-alternatives --install "/usr/bin/javac" "javac" "/usr/lib/jvm/jdk1.7.0/bin/javac" 1
-sudo update-alternatives --install "/usr/bin/javaws" "javaws" "/usr/lib/jvm/jdk1.7.0/bin/javaws" 1
-sudo chmod a+x /usr/bin/java
-sudo chmod a+x /usr/bin/javac
-sudo chmod a+x /usr/bin/javaws
+mkdir /usr/lib/jvm
+mv $MY_PATH/java/jdk1.7* /usr/lib/jvm/jdk1.7.0
+update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk1.7.0/bin/java" 1
+update-alternatives --install "/usr/bin/javac" "javac" "/usr/lib/jvm/jdk1.7.0/bin/javac" 1
+update-alternatives --install "/usr/bin/javaws" "javaws" "/usr/lib/jvm/jdk1.7.0/bin/javaws" 1
+chmod a+x /usr/bin/java
+chmod a+x /usr/bin/javac
+chmod a+x /usr/bin/javaws
+echo 'JAVA_HOME=/usr/lib/jvm/jdk1.7.0' >> /etc/default/tomcat7
+
+#Restarting NginX
+service nginx restart
+
+#Restarting php-fpm
+service php5-fpm restart
+
+#Restarting tomcat
+service tomcat7 restart
